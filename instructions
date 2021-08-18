@@ -1,0 +1,9 @@
+# Example soul instruction file
+    
+# Variables
+SOUL=/home/user
+
+# Instructions
+$SOUL/dotfiiles/zshstuff -> $SOUL/.zshrc
+/home/user/folder -> /tmp/soulfolder
+./1 -> ./2

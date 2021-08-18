@@ -1,2 +1,3 @@
-# soul
+# Soul
+
 A dotfile manager
