@@ -86,10 +86,28 @@ function dot_unlink() {
     done <${2}
 }
 
+function install_packages() {
+    if [ "$#" -ne 2 ]; then
+        error "Please specify the instruction file for soul to follow"
+        exit 1
+    fi
+    ls ${2} >/dev/null 2>&1
+    if [ $? != 0 ]; then
+        error "Please specify a valid instruction file for soul to follow"
+        exit 1
+    fi
+    info "Downloading packages as specified in ${2}"
+    packages=$(cat ${2} | sed 's/#.*//g' | sed 's/^COMMAND=.*//g' | xargs)
+    command=$(cat ${2} | grep '^COMMAND=' | sed 's/COMMAND=//g' | sed "s/'//g")
+    echo $packages
+    ${command} ${packages}
+}
+
 case "$1" in
     '') help ;;
     help) help ;;
     link) dot_link $@ ;;
     unlink) dot_unlink $@ ;;
+    ensure) install_packages $@ ;;
     *) error "$0: invalid option -- '$1'. Try '$0 help' for more information" ;;
 esac

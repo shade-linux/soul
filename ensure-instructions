@@ -1,0 +1,8 @@
+# Example soul ensure instruction file
+    
+# Command to use
+COMMAND='brew install'
+
+# Instructions
+qutebrowser firefox
+vim neovim emacs
