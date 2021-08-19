@@ -1,9 +1,6 @@
 # Example soul link instruction file
     
-# Variables
-SOUL=/home/user
-
 # Instructions
-$SOUL/dotfiiles/zshstuff -> $SOUL/.zshrc
+/home/user/dotfiles/zshstuff -> /home/user/.zshrc
 /home/user/folder -> /tmp/soulfolder
 ./1 -> ./2

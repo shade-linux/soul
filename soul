@@ -52,13 +52,18 @@ function dot_link() {
     fi
     info "Linking files as specified in ${2}"
     while read i; do
-        test=$(echo ${i} | sed 's/ -> / /g' | awk '{print $1;}')
+        [[ "$i" =~ ^[[:space:]]*# ]] && continue
+        [[ "$i" =~ ^[[:space:]]*$ ]] && continue
+        test=$(echo ${i} | sed 's/ -> / /g' | awk '{print $1;}' | sed '/#/d')
         ls ${test} > /dev/null 2>&1
         if [ $? != "0" ]; then
             error "Couldn't link ${i}: source file does not exist"
         else
-            $(echo ${i} | sed 's/ -> / /g' | sed 's/^/ln -sf /g')
-            success "File ${i} linked"
+            mkdir -p $(echo ${i} | sed 's/.* ->//g' | xargs dirname 2>/dev/null) > /dev/null 2>&1
+            $(echo "ln -sf ${i}" | sed 's/ -> / /g' | xargs | sed 's/^ln -sf$//g' | sed '/#/d')
+            if [[ ${i} != "#*" ]]; then
+                success "File ${i} linked"
+            fi
         fi
     done <${2}
 }
@@ -75,12 +80,14 @@ function dot_unlink() {
     fi
     info "Unlinking linked files as specified in ${2}"
     while read i; do
+        [[ "$i" =~ ^[[:space:]]*# ]] && continue
+        [[ "$i" =~ ^[[:space:]]*$ ]] && continue
         test=$(echo ${i} | sed 's/ -> / /g' | awk 'NF{ print $NF }')
         ls ${test} > /dev/null 2>&1
         if [ $? != "0" ]; then
             error "Couldn't unlink ${test}: destination file does not exist"
         else
-            $(echo ${i} | sed 's/ -> / /g' | sed 's/[^ ]* *//' | sed 's/^/unlink /g')
+            $(echo ${i} | sed 's/ -> / /g' | sed 's/[^ ]* *//' | sed 's/^/unlink /g') 2>/dev/null
             success "File ${test} unlinked"
         fi
     done <${2}
@@ -97,10 +104,9 @@ function install_packages() {
         exit 1
     fi
     info "Downloading packages as specified in ${2}"
-    packages=$(cat ${2} | sed 's/#.*//g' | sed 's/^COMMAND=.*//g' | xargs)
-    command=$(cat ${2} | grep '^COMMAND=' | sed 's/COMMAND=//g' | sed "s/'//g")
-    echo $packages
-    ${command} ${packages}
+    packages=$(cat ${2} | sed 's/#.*//g' | sed 's/^COMMAND.*//g' | xargs | tr " " "\n")
+    command_install=$(cat ${2} | grep '^COMMAND_INSTALL=' | sed 's/COMMAND_INSTALL=//g' | sed "s/'//g")
+    ${command_install} ${packages}
 }
 
 case "$1" in

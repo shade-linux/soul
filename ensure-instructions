@@ -1,8 +1,13 @@
 # Example soul ensure instruction file
     
-# Command to use
-COMMAND='brew install'
+# Command to use for installing
+COMMAND_INSTALL='paru -S --needed'
 
 # Instructions
-qutebrowser firefox
-vim neovim emacs
+alacritty
+binutils
+bison
+cmatrix
+qutebrowser
+ranger
+zsh
