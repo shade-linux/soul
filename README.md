@@ -1,3 +1,3 @@
 # Soul
 
-A dotfile manager
+A dotfile manager and declarative package manager
